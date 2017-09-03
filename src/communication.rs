@@ -1,30 +1,13 @@
-use std::ffi::{OsStr, OsString};
 use std::time::Duration;
 
 use std::io::prelude::*;
-use serial::{self, SerialPort, SystemPort};
+use serial::{self, SystemPort, SerialPort};
 
-pub struct Port (OsString);
-
-impl Port {
-    pub fn new<N: Into<OsString>>(name: N) -> Port {
-        Port(name.into())
-    }
-
-    pub fn name(&self) -> &OsStr {
-        &self.0
-    }
-
-    pub fn open(&self) -> serial::Result<SystemPort> {
-        serial::open(&self.name())
-    }
-}
-
-pub struct SerialConnection (serial::SystemPort);
+pub struct SerialConnection (SystemPort);
 
 impl SerialConnection {
-    pub fn open(port: &Port) -> serial::Result<SerialConnection> {
-        let mut serial = port.open()?;
+    pub fn open(port: &str) -> serial::Result<SerialConnection> {
+        let mut serial = serial::open(port)?;
         serial.reconfigure(&|settings| {
             settings.set_baud_rate(serial::Baud9600)?;
             settings.set_char_size(serial::Bits8);
@@ -34,10 +17,8 @@ impl SerialConnection {
         }).and_then(|_| {
             serial.set_timeout(Duration::from_millis(100))
         })?;
-
         let serial_connection = SerialConnection(serial);
         Ok(serial_connection)
-
     }
 
     pub fn send_data(&mut self, buf: &Message) -> serial::Result<()> {
