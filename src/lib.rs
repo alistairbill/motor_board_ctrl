@@ -1,4 +1,4 @@
 extern crate serial;
 
-pub mod motors;
+pub mod motor_board;
 mod communication;

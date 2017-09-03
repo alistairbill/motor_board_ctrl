@@ -1,13 +1,13 @@
 extern crate motor_board_ctrl;
 
-use motor_board_ctrl::motors::Motors;
+use motor_board_ctrl::motor_board::MotorBoard;
 
 use std::time::Duration;
 use std::thread;
 
 #[test]
 fn motor_test() {
-    let mut motors = Motors::init();
+    let mut motors = MotorBoard::init();
     let forwards = (0..21).chain((0..21).rev());
     let backwards = (-20..1).rev().chain((-20..1));
 
