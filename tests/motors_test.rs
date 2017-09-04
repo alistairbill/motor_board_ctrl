@@ -25,3 +25,12 @@ fn trim_test() {
     let trim = motor_board.read_trim();
     assert!(trim >= 0, "trim = {}", trim);
 }
+
+#[test]
+fn ir_test() {
+    let mut motor_board = MotorBoard::init();
+    let ir = motor_board.read_ir();
+    for x in ir.iter() {
+        assert!(x >= &0);
+    }
+}
