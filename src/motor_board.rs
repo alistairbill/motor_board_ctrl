@@ -1,8 +1,5 @@
 use communication::{SerialConnection, Message};
 
-use std::time::Duration;
-use std::thread;
-
 // const COMMAND_SWITCH_MODE: u8 = 0;
 const COMMAND_MOTORS_RUN: u8 = 10;
 const COMMAND_MOTORS_STOP: u8 = 11;
@@ -58,7 +55,6 @@ impl MotorBoard {
         buf.queue_byte(port); // B_TK1 - B_TK4
         buf.create_checksum();
         self.0.send_data(&buf).unwrap();
-        thread::sleep(Duration::from_millis(10));
         let mut recv = self.0.receive_data().unwrap();
         recv.decreate_checksum();
         let cmd = recv.dequeue_byte();
@@ -73,7 +69,6 @@ impl MotorBoard {
         buf.queue_byte(port); // B_TK1 - B_TK4
         buf.create_checksum();
         self.0.send_data(&buf).unwrap();
-        thread::sleep(Duration::from_millis(10));
         let mut recv = self.0.receive_data().unwrap();
         recv.decreate_checksum();
         let cmd = recv.dequeue_byte();
@@ -96,7 +91,6 @@ impl MotorBoard {
         buf.queue_byte(COMMAND_READ_IR);
         buf.create_checksum();
         self.0.send_data(&buf).unwrap();
-        thread::sleep(Duration::from_millis(10));
         let mut recv = self.0.receive_data().unwrap();
         recv.decreate_checksum();
         let cmd = recv.dequeue_byte();
@@ -113,7 +107,6 @@ impl MotorBoard {
         buf.queue_byte(COMMAND_READ_TRIM);
         buf.create_checksum();
         self.0.send_data(&buf).unwrap();
-        thread::sleep(Duration::from_millis(10));
         let mut recv = self.0.receive_data().unwrap();
         recv.decreate_checksum();
         let cmd = recv.dequeue_byte();

@@ -18,3 +18,10 @@ fn motor_test() {
 
     motors.motors_stop();
 }
+
+#[test]
+fn trim_test() {
+    let mut motor_board = MotorBoard::init();
+    let trim = motor_board.read_trim();
+    assert!(trim >= 0, "trim = {}", trim);
+}

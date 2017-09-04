@@ -30,7 +30,9 @@ impl SerialConnection {
     pub fn receive_data(&mut self) -> serial::Result<Message> {
         let &mut SerialConnection(ref mut serial) = self;
         let mut buf = Message::new();
-        serial.read_to_end(&mut buf.0)?;
+        let mut arr = [0; 20];
+        serial.read(&mut arr[..])?;
+        buf.0 = arr.to_vec();
         Ok(buf)
     }
 }
@@ -108,10 +110,12 @@ impl Message {
     }
 }
 
-mod test {
+#[cfg(test)]
+mod tests {
+    use super::*;
     #[test]
     fn message_checksum() {
-        let mut message = super::Message::new();
+        let mut message = Message::new();
         message.queue_byte(0xAA);
         message.queue_int(1025);
         message.create_checksum();
@@ -120,7 +124,7 @@ mod test {
     }
     #[test]
     fn message_queue() {
-        let mut message = super::Message::new();
+        let mut message = Message::new();
         message.queue_int(1025);
         message.queue_byte(0xAA);
         assert_eq!(message.dequeue_int(), 1025);
