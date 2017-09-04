@@ -6,6 +6,7 @@ use std::time::Duration;
 use std::thread;
 
 #[test]
+#[ignore]
 fn motor_test() {
     let mut motors = MotorBoard::init();
     let forwards = (0..21).chain((0..21).rev());
