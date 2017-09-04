@@ -8,15 +8,15 @@ pub struct SerialConnection(SystemPort);
 impl SerialConnection {
     pub fn open(port: &str) -> serial::Result<SerialConnection> {
         let mut serial = serial::open(port)?;
-        serial.reconfigure(&|settings| {
-            settings.set_baud_rate(serial::Baud9600)?;
-            settings.set_char_size(serial::Bits8);
-            settings.set_parity(serial::ParityNone);
-            settings.set_stop_bits(serial::Stop1);
-            Ok(())
-        }).and_then(|_| {
-            serial.set_timeout(Duration::from_millis(100))
-        })?;
+        serial
+            .reconfigure(&|settings| {
+                settings.set_baud_rate(serial::Baud9600)?;
+                settings.set_char_size(serial::Bits8);
+                settings.set_parity(serial::ParityNone);
+                settings.set_stop_bits(serial::Stop1);
+                Ok(())
+            })
+            .and_then(|_| serial.set_timeout(Duration::from_millis(100)))?;
         let mut buffer = Vec::new();
         let _ = serial.read_to_end(&mut buffer)?;
         let serial_connection = SerialConnection(serial);
@@ -84,10 +84,14 @@ impl Message {
 
     pub fn decreate_checksum(&mut self) -> Option<()> {
         let mut buf = self.0.clone();
-        if buf.len() < 3 { return None; }
+        if buf.len() < 3 {
+            return None;
+        }
         buf.reverse();
         while buf.pop().unwrap() != 0x06 {} // get rid of preamble junk
-        if buf.pop().unwrap() != 0x85 { return None; } // fail
+        if buf.pop().unwrap() != 0x85 {
+            return None;
+        } // fail
         let len = buf.pop().unwrap();
         self.0.clear();
         for _ in 0..len {
@@ -97,10 +101,10 @@ impl Message {
         for i in self.0.clone() {
             cs ^= i;
         }
-        if cs == buf.pop().unwrap() { // Checksum passed
+        if cs == buf.pop().unwrap() {
+            // Checksum passed
             return Some(());
-        }
-        else {
+        } else {
             return None;
         }
     }
