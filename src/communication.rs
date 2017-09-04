@@ -17,8 +17,6 @@ impl SerialConnection {
                 Ok(())
             })
             .and_then(|_| serial.set_timeout(Duration::from_millis(100)))?;
-        let mut buffer = Vec::new();
-        let _ = serial.read_to_end(&mut buffer)?;
         let serial_connection = SerialConnection(serial);
         Ok(serial_connection)
     }
